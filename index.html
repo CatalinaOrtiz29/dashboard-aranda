@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard Casos Activos · Aranda</title>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<header>
+  <h1>Casos Activos · Aranda</h1>
+  <div class="header-right">
+    <span class="hbadge ep" id="cnt-ep">—</span>
+    <span class="hbadge su" id="cnt-su">—</span>
+    <label class="btn-upload" for="file-input">
+      <svg viewBox="0 0 24 24"><path d="M9 16h6v-6h4l-7-7-7 7h4zm-4 2h14v2H5z"/></svg>
+      Cargar Excel
+    </label>
+    <input type="file" id="file-input" accept=".xlsx,.xls">
+    <span class="upload-status" id="upload-status">Cargado: marzo 2026</span>
+  </div>
+</header>
+
+<div class="mes-bar">
+  <span>Meses:</span>
+  <div id="mes-tabs"><span class="mes-empty">Carga un Excel para agregar meses</span></div>
+</div>
+
+<div class="container">
+  <div class="alert-banner" id="alert-banner">
+    <div class="alert-top">
+      <div class="bell"><svg viewBox="0 0 24 24"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg></div>
+      <span class="alert-title" id="alert-title"></span>
+    </div>
+    <div class="alert-items" id="alert-items"></div>
+  </div>
+
+  <div class="kpi-grid" id="kpi-grid"></div>
+
+  <div class="panels">
+    <div class="chart-card">
+      <h3>Alertas SLA por estado</h3>
+      <div style="position:relative;height:190px;"><canvas id="chart-alerta"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <h3>Top responsables críticos / vencidos</h3>
+      <div style="position:relative;height:190px;"><canvas id="chart-resp"></canvas></div>
+    </div>
+  </div>
+
+  <div class="filters">
+    <label>Tipo</label>
+    <select id="f-tipo"><option value="">Todos</option><option>INCIDENTES</option><option>REQUERIMIENTOS</option></select>
+    <label>Estado</label>
+    <select id="f-estado"><option value="">Ambos</option><option value="En Proceso">En proceso</option><option value="Suspendido">Suspendido</option></select>
+    <label>Alerta</label>
+    <select id="f-alerta">
+      <option value="">Todas</option>
+      <option value="normal">Normal (0-59%)</option>
+      <option value="atencion">Atención (60-69%)</option>
+      <option value="critico">Crítico (70-99%)</option>
+      <option value="vencido">Vencido (≥100%)</option>
+    </select>
+    <label>Responsable</label>
+    <select id="f-resp"><option value="">Todos</option></select>
+    <button class="btn-reset" onclick="resetFiltros()">Limpiar</button>
+  </div>
+
+  <div class="table-card">
+    <div class="table-header">
+      <h3>Detalle de casos activos</h3>
+      <span class="table-info" id="table-info"></span>
+    </div>
+    <div class="legend-row">
+      <div class="legend-item"><div class="ldot" style="background:#22c55e"></div>Normal</div>
+      <div class="legend-item"><div class="ldot" style="background:#f59e0b"></div>Atención 60-69%</div>
+      <div class="legend-item"><div class="ldot" style="background:#f97316"></div>Crítico 70-99%</div>
+      <div class="legend-item"><div class="ldot" style="background:#ef4444"></div>Vencido ≥100%</div>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr>
+          <th onclick="sortBy('Cod Caso')">Código ↕</th>
+          <th>Tipo</th><th>Estado</th><th>Razón de estado</th>
+          <th>Responsable</th><th>Compañía</th><th>Registro</th>
+          <th onclick="sortBy('pct')" style="min-width:150px;">Progreso SLA ↕</th>
+        </tr></thead>
+        <tbody id="tabla-body"></tbody>
+      </table>
+    </div>
+    <div class="pagination" id="pagination"></div>
+  </div>
+</div>
+
+<script src="js/app.js"></script>
+</body>
+</html>
